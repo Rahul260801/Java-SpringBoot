@@ -3,6 +3,7 @@ package com.example.project.sms.controller;
 import com.example.project.sms.dto.StudentRequestDto;
 import com.example.project.sms.dto.StudentResponseDto;
 import com.example.project.sms.entity.Student;
+import com.example.project.sms.payload.ApiResponse;
 import com.example.project.sms.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,44 +25,75 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentResponseDto> getById(@PathVariable Long id) {
-//       StudentResponseDto student =studentService.getId(id);
-//        if (student==null){
-//            return ResponseEntity.notFound().build();
-//        }
-       // return ResponseEntity.ok(student);
-        return ResponseEntity.ok(studentService.getId(id));
+    public ResponseEntity<ApiResponse<StudentResponseDto>> getById(@PathVariable Long id) {
+        StudentResponseDto students = studentService.getId(id);
+        ApiResponse<StudentResponseDto> response = new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student fetch successfully",
+                students
+        );
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/getAll")
-    public ResponseEntity<List<StudentResponseDto>> getAll(){
-        return ResponseEntity.ok(studentService.getAll());
+    public ResponseEntity<ApiResponse<List<StudentResponseDto>>> getAll(){
+        List<StudentResponseDto> students = studentService.getAll();
+        ApiResponse<List<StudentResponseDto>> response = new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student fetch successfully",
+                students
+        );
+        return ResponseEntity.ok(response);
     }
     @PostMapping
-    public ResponseEntity<StudentResponseDto> createStud(@Valid @RequestBody StudentRequestDto dto){
+    public ResponseEntity <ApiResponse<StudentResponseDto>> createStud(@Valid @RequestBody StudentRequestDto dto){
         StudentResponseDto saveStud=studentService.saveStud(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saveStud);
+        ApiResponse <StudentResponseDto> res= new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.CREATED.value(),
+                "Student created  successfully",
+                saveStud
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
     @PutMapping("/update")
-    public ResponseEntity<StudentResponseDto> updateStudent(@PathVariable Long id,@Valid @RequestBody StudentRequestDto dto){
-//        StudentResponseDto student = studentService.updateStud(id,dto);
-//        if (student==null){
-//            return ResponseEntity.noContent().build();
-//        }
-//        return ResponseEntity.ok(student);
-        return ResponseEntity.ok(studentService.updateStud(id,dto));
+    public ResponseEntity <ApiResponse<StudentResponseDto>> updateStudent(@PathVariable Long id,@Valid @RequestBody StudentRequestDto dto){
+        StudentResponseDto stu = studentService.updateStud(id,dto);
+        ApiResponse<StudentResponseDto> res=new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student updated  successfully",
+                stu
+        );
+        return ResponseEntity.ok(res);
     }
     @PatchMapping("/partUpdate/{id}")
-    public ResponseEntity<StudentResponseDto> partialUpdate(@RequestBody StudentRequestDto dto,@PathVariable Long id){
-//        StudentResponseDto student =studentService.partUpdate(dto,id);
-//        if (student==null){
-//            return ResponseEntity.noContent().build();
-//        }
-  //      return ResponseEntity.ok(student);
-        return ResponseEntity.ok(studentService.partUpdate(dto,id));
+    public ResponseEntity <ApiResponse<StudentResponseDto>> partialUpdate(@RequestBody StudentRequestDto dto,@PathVariable Long id){
+        StudentResponseDto students = studentService.partUpdate(dto,id);
+        ApiResponse<StudentResponseDto> resp = new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student updated  successfully",
+                students
+        );
+        return ResponseEntity.ok(resp);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id){
+    public ResponseEntity <ApiResponse<Object>> deleteById(@PathVariable Long id){
         studentService.deleteById(id);
-        return ResponseEntity.noContent().build();
+         ApiResponse<Object> response =new ApiResponse<>(
+                 true,
+                 LocalDateTime.now(),
+                 HttpStatus.OK.value(),
+                 "student deleted successfully",
+                 null
+         );
+        return ResponseEntity.ok(response);
     }
 }

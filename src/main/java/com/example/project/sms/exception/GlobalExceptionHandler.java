@@ -1,5 +1,6 @@
 package com.example.project.sms.exception;
 
+import com.example.project.sms.payload.ApiResponse;
 import com.example.project.sms.payload.ErrorResponse;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,41 +20,41 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleStudentNotFoundException(StudentNotFoundException ex, HttpServletRequest request) {
-        ErrorResponse er = new ErrorResponse(
+    public ResponseEntity <ApiResponse<Object>> handleStudentNotFoundException(StudentNotFoundException ex, HttpServletRequest request) {
+        ApiResponse<Object> response = new  ApiResponse<>(
+                false,
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
                 ex.getMessage(),
                 request.getRequestURI()
         );
-        return new ResponseEntity<>(er,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException ex, HttpServletRequest request) {
-        ErrorResponse er = new ErrorResponse(
+    public ResponseEntity <ApiResponse<Object>> handleDuplicateEmail(DuplicateEmailException ex, HttpServletRequest request) {
+        ApiResponse<Object> response = new  ApiResponse<>(
+                false,
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
                 ex.getMessage(),
-                request.getRequestURI()
+                null
         );
-        return new ResponseEntity<>(er,HttpStatus.CONFLICT);
+        return new ResponseEntity<>(response,HttpStatus.CONFLICT);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public  ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest req){
+    public  ResponseEntity <ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest req){
         Map<String,String> errors=new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
             errors.put(fieldError.getField(),fieldError.getDefaultMessage());
         });
-        ErrorResponse er=new ErrorResponse(
+        ApiResponse<Object> response = new  ApiResponse<>(
+                false,
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                errors,
-                req.getRequestURI()
+                "Validation fail",
+                errors
         );
-        return new ResponseEntity<>(er,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 }
