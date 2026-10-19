@@ -13,7 +13,9 @@ public class StudentRequestDto {
     private String Number;
     private String email;
     @NotBlank(message = "password is required") @Size(min=8,message = "Pwd Required") @Pattern(
-            regexp = "^(?=.*[A-Z]) (?=.*[a-z]) (?=.*\\d) (?=.*[@#$%^&+=!]).{8,}$"
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$"
     )
     private String password;
+
+    private AddressRequestDto addressRequestDto;
 }

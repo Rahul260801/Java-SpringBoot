@@ -1,9 +1,6 @@
 package com.example.project.sms.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,4 +21,7 @@ public class Student {
     private String Number;
     private String password;
     private LocalDateTime createdAt;
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+    @JoinColumn(name = "addrss_id")
+    private Address address;
 }

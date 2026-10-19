@@ -1,7 +1,9 @@
 package com.example.project.sms.service;
 
+import com.example.project.sms.dto.AddressResponseDto;
 import com.example.project.sms.dto.StudentRequestDto;
 import com.example.project.sms.dto.StudentResponseDto;
+import com.example.project.sms.entity.Address;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.exception.DuplicateEmailException;
 import com.example.project.sms.exception.StudentNotFoundException;
@@ -37,11 +39,17 @@ public class StudentServiceImpl implements StudentService{
         if(studentRepository.existsByEmail(dto.getEmail())){
             throw new DuplicateEmailException("Student already exist");
         }
+        Address address =new Address();
+        address.setCity(dto.getAddressRequestDto().getCity());
+        address.setState(dto.getAddressRequestDto().getState());
+        address.setCountry(dto.getAddressRequestDto().getCountry());
+
         Student student = new Student();
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setNumber(dto.getNumber());
         student.setEmail(dto.getEmail());
+        student.setAddress(address);
         Student saveStu = studentRepository.save(student);
       return   mapToResponse(saveStu);
     }
@@ -54,7 +62,14 @@ public class StudentServiceImpl implements StudentService{
             exsStu.setLastName(dto.getLastName());
             exsStu.setEmail(dto.getEmail());
             exsStu.setNumber(dto.getNumber());
-//            exsStu.setPassword(dto.getPassword());
+            Address address = exsStu.getAddress();
+            if (address == null){
+                address = new Address();
+            }
+            address.setCity(dto.getAddressRequestDto().getCity());
+            address.setState(dto.getAddressRequestDto().getState());
+            address.setCountry(dto.getAddressRequestDto().getCountry());
+            exsStu.setAddress(address);
             Student updStudent = studentRepository.save(exsStu);
             return mapToResponse(updStudent);
     }
@@ -75,6 +90,22 @@ public class StudentServiceImpl implements StudentService{
         if (dto.getEmail()!=null){
             exsStu.setEmail(dto.getEmail());
         }
+        if (dto.getAddressRequestDto()!=null){
+           Address address = exsStu.getAddress();
+            if (address == null){
+                address = new Address();
+            }
+           if (dto.getAddressRequestDto().getCity() !=null){
+               address.setCity(dto.getAddressRequestDto().getCity());
+           }
+            if (dto.getAddressRequestDto().getState() !=null){
+                address.setState(dto.getAddressRequestDto().getState());
+            }
+            if (dto.getAddressRequestDto().getCountry() !=null){
+                address.setCountry(dto.getAddressRequestDto().getCountry());
+            }
+            exsStu.setAddress(address);
+        }
         Student parUpd = studentRepository.save(exsStu);
         return mapToResponse(parUpd);
     }
@@ -85,6 +116,11 @@ public class StudentServiceImpl implements StudentService{
         dto.setFirstName(student.getFirstName());
         dto.setLastName(student.getLastName());
         dto.setEmail(student.getEmail());
+        AddressResponseDto addressResponseDto = new AddressResponseDto();
+        addressResponseDto.setCity(student.getAddress().getCity());
+        addressResponseDto.setState(student.getAddress().getState());
+        addressResponseDto.setCountry(student.getAddress().getCountry());
+        dto.setAddressResponseDto(addressResponseDto);
         return dto;
     }
 }
