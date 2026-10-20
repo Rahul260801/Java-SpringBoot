@@ -4,24 +4,27 @@ import com.example.project.sms.dto.AddressResponseDto;
 import com.example.project.sms.dto.StudentRequestDto;
 import com.example.project.sms.dto.StudentResponseDto;
 import com.example.project.sms.entity.Address;
+import com.example.project.sms.entity.Department;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.exception.DuplicateEmailException;
+import com.example.project.sms.exception.ResourceNotFoundException;
 import com.example.project.sms.exception.StudentNotFoundException;
+import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService{
     @Autowired
-    public final StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
+    private final DepartmentRepository departmentRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
 
     @Override
     public StudentResponseDto getId(Long id) {
@@ -44,12 +47,20 @@ public class StudentServiceImpl implements StudentService{
         address.setState(dto.getAddressRequestDto().getState());
         address.setCountry(dto.getAddressRequestDto().getCountry());
 
+
+        Department dept =departmentRepository.findById(dto.getDepartmentId()).orElseThrow(()->
+                new ResourceNotFoundException("dept not found")
+        );
+
         Student student = new Student();
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setNumber(dto.getNumber());
         student.setEmail(dto.getEmail());
         student.setAddress(address);
+
+        student.setDepartment(dept);
+
         Student saveStu = studentRepository.save(student);
       return   mapToResponse(saveStu);
     }
@@ -69,7 +80,11 @@ public class StudentServiceImpl implements StudentService{
             address.setCity(dto.getAddressRequestDto().getCity());
             address.setState(dto.getAddressRequestDto().getState());
             address.setCountry(dto.getAddressRequestDto().getCountry());
+
+            Department dept = departmentRepository.findById(dto.getDepartmentId()).orElseThrow(()-> new ResourceNotFoundException("id not found"));
+            exsStu.setDepartment(dept);
             exsStu.setAddress(address);
+
             Student updStudent = studentRepository.save(exsStu);
             return mapToResponse(updStudent);
     }
@@ -106,6 +121,12 @@ public class StudentServiceImpl implements StudentService{
             }
             exsStu.setAddress(address);
         }
+
+        if (dto.getDepartmentId()!=null) {
+            Department dept = departmentRepository.findById(dto.getDepartmentId()).orElseThrow(() -> new StudentNotFoundException("not found"));
+            exsStu.setDepartment(dept);
+        }
+
         Student parUpd = studentRepository.save(exsStu);
         return mapToResponse(parUpd);
     }
@@ -121,6 +142,8 @@ public class StudentServiceImpl implements StudentService{
         addressResponseDto.setState(student.getAddress().getState());
         addressResponseDto.setCountry(student.getAddress().getCountry());
         dto.setAddressResponseDto(addressResponseDto);
+
+        dto.setDepartmentName(student.getDepartment().getDeptName());
         return dto;
     }
 }

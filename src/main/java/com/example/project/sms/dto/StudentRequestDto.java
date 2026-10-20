@@ -1,6 +1,7 @@
 package com.example.project.sms.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -18,4 +19,7 @@ public class StudentRequestDto {
     private String password;
 
     private AddressRequestDto addressRequestDto;
+
+    @NotNull(message = "Dept id req")
+    private Long departmentId;
 }
