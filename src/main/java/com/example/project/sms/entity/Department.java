@@ -3,6 +3,8 @@ package com.example.project.sms.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -15,4 +17,6 @@ public class Department {
     private Long id;
     @Column(nullable = false,length = 100 )
     private String deptName;
+    @OneToMany(mappedBy = "department")
+    private List<Student> students;
 }

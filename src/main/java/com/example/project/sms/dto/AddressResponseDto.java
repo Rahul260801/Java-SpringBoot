@@ -7,5 +7,4 @@ public class AddressResponseDto {
     private String city;
     private String state;
     private String country;
-
 }
