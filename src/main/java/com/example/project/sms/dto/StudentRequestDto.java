@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class StudentRequestDto {
     @NotBlank(message = "first name required") @Size(min = 2, max = 30, message = "it is between 2 to 40 character")
@@ -22,4 +24,6 @@ public class StudentRequestDto {
 
     @NotNull(message = "Dept id req")
     private Long departmentId;
+
+    private List<Long> courseId;
 }

@@ -1,14 +1,17 @@
 package com.example.project.sms.service;
 
 import com.example.project.sms.dto.AddressResponseDto;
+import com.example.project.sms.dto.CourseResponseDto;
 import com.example.project.sms.dto.StudentRequestDto;
 import com.example.project.sms.dto.StudentResponseDto;
 import com.example.project.sms.entity.Address;
+import com.example.project.sms.entity.Course;
 import com.example.project.sms.entity.Department;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.exception.DuplicateEmailException;
 import com.example.project.sms.exception.ResourceNotFoundException;
 import com.example.project.sms.exception.StudentNotFoundException;
+import com.example.project.sms.repository.CourseRepository;
 import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class StudentServiceImpl implements StudentService{
     @Autowired
     private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
+    private final CourseRepository courseRepository;
 
 
     @Override
@@ -42,16 +46,19 @@ public class StudentServiceImpl implements StudentService{
         if(studentRepository.existsByEmail(dto.getEmail())){
             throw new DuplicateEmailException("Student already exist");
         }
+        //Address entity
         Address address =new Address();
         address.setCity(dto.getAddressRequestDto().getCity());
         address.setState(dto.getAddressRequestDto().getState());
         address.setCountry(dto.getAddressRequestDto().getCountry());
-
-
+        // Dept entity
         Department dept =departmentRepository.findById(dto.getDepartmentId()).orElseThrow(()->
                 new ResourceNotFoundException("dept not found")
         );
+        //Course entity
+        List<Course> courses = courseRepository.findAllById(dto.getCourseId());
 
+        //Student entity
         Student student = new Student();
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
@@ -61,6 +68,7 @@ public class StudentServiceImpl implements StudentService{
 
         student.setDepartment(dept);
 
+        student.setCourses(courses);
         Student saveStu = studentRepository.save(student);
       return   mapToResponse(saveStu);
     }
@@ -142,8 +150,16 @@ public class StudentServiceImpl implements StudentService{
         addressResponseDto.setState(student.getAddress().getState());
         addressResponseDto.setCountry(student.getAddress().getCountry());
         dto.setAddressResponseDto(addressResponseDto);
-
         dto.setDepartmentName(student.getDepartment().getDeptName());
+        dto.setCourses(student.getCourses().stream().map(course -> new CourseResponseDto(
+                course.getId(),
+                course.getCourseName(),
+                course.getDuration(),
+                course.getFees(),
+                course.getInstructorName()
+        )).toList()
+        );
+
         return dto;
     }
 }
