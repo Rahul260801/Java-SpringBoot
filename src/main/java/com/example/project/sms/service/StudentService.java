@@ -20,4 +20,8 @@ public interface StudentService {
     void deleteById(Long id);
 
  StudentResponseDto partUpdate(StudentRequestDto dto,Long id);
+ StudentResponseDto getStudentByEmail(String email);
+ Long getStudentCountByCourse(String courseName);
+ List<StudentResponseDto> getStudentByFirstNameAndCourse(String firstName,String course);
+ StudentResponseDto getStudentByEmailNative(String email);
 }

@@ -84,6 +84,11 @@ public class StudentController {
         );
         return ResponseEntity.ok(resp);
     }
+    @GetMapping("/email/{email}")
+    public ResponseEntity<StudentResponseDto> getStudentByEmail(@PathVariable String email){
+        return ResponseEntity.ok(studentService.getStudentByEmail(email));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity <ApiResponse<Object>> deleteById(@PathVariable Long id){
         studentService.deleteById(id);
@@ -94,6 +99,26 @@ public class StudentController {
                  "student deleted successfully",
                  null
          );
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<Long>> getStudentCountByCourse(@RequestParam String courseName){
+        Long count = studentService.getStudentCountByCourse(courseName);
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student count fetched successfully",
+                count
+        ));
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<StudentResponseDto>>getStudents(@RequestParam String firstName, @RequestParam String course){
+       return ResponseEntity.ok(studentService.getStudentByFirstNameAndCourse(firstName,course));
+    }
+    @GetMapping("/nativeEmail/{email}")
+    public ResponseEntity<StudentResponseDto> getStudentByEmailNative(@PathVariable String email){
+        StudentResponseDto response = studentService.getStudentByEmailNative(email);
         return ResponseEntity.ok(response);
     }
 }

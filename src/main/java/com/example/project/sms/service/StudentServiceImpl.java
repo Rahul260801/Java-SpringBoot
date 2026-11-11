@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+
 @RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -137,6 +139,34 @@ public class StudentServiceImpl implements StudentService{
 
         Student parUpd = studentRepository.save(exsStu);
         return mapToResponse(parUpd);
+    }
+
+    @Override
+    public StudentResponseDto getStudentByEmail(String email) {
+        Student student =studentRepository.findByEmail(email).orElseThrow(()->
+             new ResourceNotFoundException("Student not found")
+        );
+            return mapToResponse(student);
+    }
+
+    @Override
+    public Long getStudentCountByCourse(String courseName) {
+        return studentRepository.countStudentByCourse(courseName);
+    }
+
+    @Override
+    public List<StudentResponseDto> getStudentByFirstNameAndCourse(String firstName, String course) {
+        List<Student> students = studentRepository.findByFirstNameAndCourse(firstName,course);
+     return students.stream().map(this::mapToResponse).toList();
+    }
+
+    @Override
+    public StudentResponseDto getStudentByEmailNative(String email) {
+
+        Student student = studentRepository.findByEmailNative(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+
+        return mapToResponse(student);
     }
 
     private StudentResponseDto mapToResponse (Student student){
