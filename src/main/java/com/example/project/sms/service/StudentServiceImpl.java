@@ -16,6 +16,10 @@ import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -168,6 +172,26 @@ public class StudentServiceImpl implements StudentService{
 
         return mapToResponse(student);
     }
+
+    @Override
+    public List<StudentResponseDto> getAllStudentSortByFirstName() {
+        Sort sort = Sort.by("firstName").ascending().and(Sort.by("lastName"));
+        List<Student> students = studentRepository.findAll(sort);
+            //    Sort.by("firstName").descending());
+        return students.stream().map(this::mapToResponse).toList();
+    }
+
+    @Override
+    public Page<StudentResponseDto> getStudent(Pageable pageable) {
+        Page<Student> studentPage = studentRepository.findAll(pageable);
+        return studentPage.map(this::mapToResponse);
+    }
+//    public Page<StudentResponseDto> getStudent(int page, int size) {
+//        Pageable pageable = PageRequest.of(page,size,Sort.by("firstName").descending());
+//        Page<Student> studentPage = studentRepository.findAll(pageable);
+//        return studentPage.map(this::mapToResponse);
+//    }
+
 
     private StudentResponseDto mapToResponse (Student student){
         StudentResponseDto dto =new StudentResponseDto();

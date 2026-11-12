@@ -7,6 +7,8 @@ import com.example.project.sms.payload.ApiResponse;
 import com.example.project.sms.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -121,4 +123,15 @@ public class StudentController {
         StudentResponseDto response = studentService.getStudentByEmailNative(email);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/sort")
+    public ResponseEntity<List<StudentResponseDto>> getSorted(){
+        return ResponseEntity.ok(studentService.getAllStudentSortByFirstName());
+    }
+    @GetMapping("/page")
+//    public ResponseEntity<Page<StudentResponseDto>> getAllStudents(@RequestParam(defaultValue = "0")int page,@RequestParam(defaultValue = "5") int size){
+//        return ResponseEntity.ok(studentService.getStudent(page, size));
+    public ResponseEntity<Page<StudentResponseDto>> getAllStudents(Pageable pageable){
+        return ResponseEntity.ok(studentService.getStudent(pageable));
+    }
+
 }
