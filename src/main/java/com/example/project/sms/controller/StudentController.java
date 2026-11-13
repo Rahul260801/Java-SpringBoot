@@ -1,9 +1,11 @@
 package com.example.project.sms.controller;
 
+import com.example.project.sms.dto.StudentProjectionDto;
 import com.example.project.sms.dto.StudentRequestDto;
 import com.example.project.sms.dto.StudentResponseDto;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.payload.ApiResponse;
+import com.example.project.sms.projection.StudentProjection;
 import com.example.project.sms.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +134,18 @@ public class StudentController {
 //        return ResponseEntity.ok(studentService.getStudent(page, size));
     public ResponseEntity<Page<StudentResponseDto>> getAllStudents(Pageable pageable){
         return ResponseEntity.ok(studentService.getStudent(pageable));
+    }
+    //...updated
+
+    @GetMapping("/projection")
+    public ResponseEntity<List<StudentProjection>> getStudentProjection(){
+        return ResponseEntity.ok(studentService.getStudentProjection());
+    }
+    //..updated
+
+    @GetMapping("/projection/dto")
+    public List<StudentProjectionDto> getStudentProjectionDto(){
+        return studentService.getProjectionDto();
     }
 
 }

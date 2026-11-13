@@ -1,6 +1,8 @@
 package com.example.project.sms.repository;
 
+import com.example.project.sms.dto.StudentProjectionDto;
 import com.example.project.sms.entity.Student;
+import com.example.project.sms.projection.StudentProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,6 +32,13 @@ AND LOWER(c.courseName) = LOWER(:course)
     @Query(value = "SELECT * FROM student WHERE email = :email",
     nativeQuery= true)
     Optional<Student> findByEmailNative(@Param("email") String email);
-
+    //...updated
+    List<StudentProjection> findBy();
+    //...updated
+    @Query("""
+SELECT new com.example.project.sms.dto.StudentProjectionDto
+(s.firstName,s.lastName,s.email ) FROM Student s
+""")
+    List<StudentProjectionDto> getStudentProjection();
 
 }

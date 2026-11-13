@@ -1,9 +1,6 @@
 package com.example.project.sms.service;
 
-import com.example.project.sms.dto.AddressResponseDto;
-import com.example.project.sms.dto.CourseResponseDto;
-import com.example.project.sms.dto.StudentRequestDto;
-import com.example.project.sms.dto.StudentResponseDto;
+import com.example.project.sms.dto.*;
 import com.example.project.sms.entity.Address;
 import com.example.project.sms.entity.Course;
 import com.example.project.sms.entity.Department;
@@ -11,6 +8,7 @@ import com.example.project.sms.entity.Student;
 import com.example.project.sms.exception.DuplicateEmailException;
 import com.example.project.sms.exception.ResourceNotFoundException;
 import com.example.project.sms.exception.StudentNotFoundException;
+import com.example.project.sms.projection.StudentProjection;
 import com.example.project.sms.repository.CourseRepository;
 import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
@@ -181,16 +179,28 @@ public class StudentServiceImpl implements StudentService{
         return students.stream().map(this::mapToResponse).toList();
     }
 
+    //    public Page<StudentResponseDto> getStudent(int page, int size) {
+//        Pageable pageable = PageRequest.of(page,size,Sort.by("firstName").descending());
+//        Page<Student> studentPage = studentRepository.findAll(pageable);
+//        return studentPage.map(this::mapToResponse);
+//    }
     @Override
     public Page<StudentResponseDto> getStudent(Pageable pageable) {
         Page<Student> studentPage = studentRepository.findAll(pageable);
         return studentPage.map(this::mapToResponse);
     }
-//    public Page<StudentResponseDto> getStudent(int page, int size) {
-//        Pageable pageable = PageRequest.of(page,size,Sort.by("firstName").descending());
-//        Page<Student> studentPage = studentRepository.findAll(pageable);
-//        return studentPage.map(this::mapToResponse);
-//    }
+    //...updated
+    @Override
+    public List<StudentProjection> getStudentProjection() {
+        return studentRepository.findBy();
+    }
+    //...updated
+
+    @Override
+    public List<StudentProjectionDto> getProjectionDto() {
+        return studentRepository.getStudentProjection();
+    }
+
 
 
     private StudentResponseDto mapToResponse (Student student){
