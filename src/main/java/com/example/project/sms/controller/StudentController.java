@@ -149,9 +149,8 @@ public class StudentController {
         return studentService.getProjectionDto();
     }
 
-    //updated
-    //http://localhost:8080/api/search/specification?firstName=Rahul&email=rahul.s@gmail.com&courses=Java
-    @GetMapping("/search/specification")
+
+    @GetMapping("/search/projection")
     public ResponseEntity<ApiResponse<List<StudentResponseDto>>> search(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String email,
@@ -171,6 +170,15 @@ public class StudentController {
 
         return ResponseEntity.ok(response);
     }
-
+//upd
+    //http://localhost:8080/api/custom/dept?departmentName=CS
+    @GetMapping("/custom")
+    public List<StudentResponseDto> getAllCustom(){
+        return studentService.getAllStudentCustom();
+    }
+    @GetMapping("/custom/dept")
+    public List<StudentResponseDto> getAllCustomDept(String departmentName){
+        return studentService.getStudentByDeptCustom(departmentName);
+    }
 
 }

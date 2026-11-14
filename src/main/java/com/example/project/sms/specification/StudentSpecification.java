@@ -3,7 +3,7 @@ package com.example.project.sms.specification;
 import com.example.project.sms.entity.Student;
 import org.springframework.data.jpa.domain.Specification;
 
-//updated
+
 public class StudentSpecification {
      public static Specification<Student> hasFirstName(String firstName){
          if (firstName==null || firstName.isBlank()){

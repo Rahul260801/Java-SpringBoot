@@ -3,6 +3,7 @@ package com.example.project.sms.repository;
 import com.example.project.sms.dto.StudentProjectionDto;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.projection.StudentProjection;
+import com.example.project.sms.repository.custom.StudentRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 //updated
-public interface StudentRepository extends JpaRepository<Student,Long>, JpaSpecificationExecutor<Student> {
+public interface StudentRepository extends JpaRepository<Student,Long>, JpaSpecificationExecutor<Student>, StudentRepositoryCustom {
     boolean existsByEmail(String email);
     Optional<Student> findByEmail(String email);
     @Query("""

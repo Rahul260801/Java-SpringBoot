@@ -10,6 +10,7 @@ import com.example.project.sms.projection.StudentProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -37,6 +38,9 @@ List<StudentProjection> getStudentProjection();
 
 List<StudentProjectionDto> getProjectionDto();
 
+
+  List<StudentResponseDto> searchStud(String firstName,String email,String courses);
     //updated
-    public List<StudentResponseDto> searchStud(String firstName,String email,String courses);
+    List<StudentResponseDto> getAllStudentCustom();
+    List<StudentResponseDto> getStudentByDeptCustom(@RequestParam  String departmentName);
 }

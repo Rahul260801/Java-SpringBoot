@@ -203,7 +203,7 @@ public class StudentServiceImpl implements StudentService{
         return studentRepository.getStudentProjection();
     }
 
-    //updated
+
     @Override
     public List<StudentResponseDto> searchStud(String firstName, String email, String courses) {
         Specification<Student> spec = Specification.allOf(
@@ -212,6 +212,18 @@ public class StudentServiceImpl implements StudentService{
                 StudentSpecification.hasCourse(courses)
         );
         List<Student> students =studentRepository.findAll(spec);
+        return students.stream().map(this::mapToResponse).toList();
+    }
+//upda
+    @Override
+    public List<StudentResponseDto> getAllStudentCustom() {
+        List<Student> students = studentRepository.findStudentCustom();
+        return students.stream().map(this::mapToResponse).toList();
+    }
+
+    @Override
+    public List<StudentResponseDto> getStudentByDeptCustom(String departmentName) {
+        List<Student> students = studentRepository.findStudentByDept(departmentName);
         return students.stream().map(this::mapToResponse).toList();
     }
 
