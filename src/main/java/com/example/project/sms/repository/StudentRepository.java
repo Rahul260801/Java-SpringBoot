@@ -4,6 +4,7 @@ import com.example.project.sms.dto.StudentProjectionDto;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.projection.StudentProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StudentRepository extends JpaRepository<Student,Long> {
+//updated
+public interface StudentRepository extends JpaRepository<Student,Long>, JpaSpecificationExecutor<Student> {
     boolean existsByEmail(String email);
     Optional<Student> findByEmail(String email);
     @Query("""
@@ -32,9 +34,9 @@ AND LOWER(c.courseName) = LOWER(:course)
     @Query(value = "SELECT * FROM student WHERE email = :email",
     nativeQuery= true)
     Optional<Student> findByEmailNative(@Param("email") String email);
-    //...updated
+
     List<StudentProjection> findBy();
-    //...updated
+
     @Query("""
 SELECT new com.example.project.sms.dto.StudentProjectionDto
 (s.firstName,s.lastName,s.email ) FROM Student s

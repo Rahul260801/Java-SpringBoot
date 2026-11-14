@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+
 @RestController
 @RequestMapping("/api")
 public class StudentController {
@@ -135,17 +137,40 @@ public class StudentController {
     public ResponseEntity<Page<StudentResponseDto>> getAllStudents(Pageable pageable){
         return ResponseEntity.ok(studentService.getStudent(pageable));
     }
-    //...updated
+
 
     @GetMapping("/projection")
     public ResponseEntity<List<StudentProjection>> getStudentProjection(){
         return ResponseEntity.ok(studentService.getStudentProjection());
     }
-    //..updated
 
     @GetMapping("/projection/dto")
     public List<StudentProjectionDto> getStudentProjectionDto(){
         return studentService.getProjectionDto();
     }
+
+    //updated
+    //http://localhost:8080/api/search/specification?firstName=Rahul&email=rahul.s@gmail.com&courses=Java
+    @GetMapping("/search/specification")
+    public ResponseEntity<ApiResponse<List<StudentResponseDto>>> search(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required=false) String courses
+    ) {
+
+        List<StudentResponseDto> students =
+                studentService.searchStud(firstName, email,courses);
+
+        ApiResponse<List<StudentResponseDto>> response = new ApiResponse<>(
+                true,
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Student search success",
+                students
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

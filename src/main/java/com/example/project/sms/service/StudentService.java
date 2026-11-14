@@ -32,8 +32,11 @@ public interface StudentService {
  List<StudentResponseDto> getAllStudentSortByFirstName();
 // Page<StudentResponseDto> getStudent(int page, int size);
 Page<StudentResponseDto> getStudent(Pageable pageable);
-    //...updated
+
 List<StudentProjection> getStudentProjection();
-//...updated
+
 List<StudentProjectionDto> getProjectionDto();
+
+    //updated
+    public List<StudentResponseDto> searchStud(String firstName,String email,String courses);
 }

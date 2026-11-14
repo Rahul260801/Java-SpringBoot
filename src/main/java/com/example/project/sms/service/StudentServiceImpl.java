@@ -12,12 +12,14 @@ import com.example.project.sms.projection.StudentProjection;
 import com.example.project.sms.repository.CourseRepository;
 import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
+import com.example.project.sms.specification.StudentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -189,18 +191,29 @@ public class StudentServiceImpl implements StudentService{
         Page<Student> studentPage = studentRepository.findAll(pageable);
         return studentPage.map(this::mapToResponse);
     }
-    //...updated
+
     @Override
     public List<StudentProjection> getStudentProjection() {
         return studentRepository.findBy();
     }
-    //...updated
+
 
     @Override
     public List<StudentProjectionDto> getProjectionDto() {
         return studentRepository.getStudentProjection();
     }
 
+    //updated
+    @Override
+    public List<StudentResponseDto> searchStud(String firstName, String email, String courses) {
+        Specification<Student> spec = Specification.allOf(
+                StudentSpecification.hasFirstName(firstName),
+                StudentSpecification.hasEmail(email),
+                StudentSpecification.hasCourse(courses)
+        );
+        List<Student> students =studentRepository.findAll(spec);
+        return students.stream().map(this::mapToResponse).toList();
+    }
 
 
     private StudentResponseDto mapToResponse (Student student){
