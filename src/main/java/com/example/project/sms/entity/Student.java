@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,8 +19,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//updated
 @EntityListeners(AuditingEntityListener.class)
+//updated
+@SQLDelete(sql = "UPDATE Student SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false ")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +32,6 @@ public class Student {
     private String email;
     private String Number;
     private String password;
-    //updated
     @CreatedDate
     @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;
@@ -52,5 +55,8 @@ public class Student {
             @JoinTable(name = "student_courses",joinColumns = @JoinColumn(name = "student_id"),inverseJoinColumns =
             @JoinColumn(name = "course_id"))
     List<Course> courses =new ArrayList<>();
+    //updated
+    @Column(nullable = false)
+    private boolean deleted = false;
 
 }

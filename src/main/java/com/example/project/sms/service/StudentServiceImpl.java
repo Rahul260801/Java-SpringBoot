@@ -114,10 +114,12 @@ public class StudentServiceImpl implements StudentService{
             return mapToResponse(updStudent);
     }
 
+    //updated
     @Override
     public void deleteById(Long id) {
         Student student = studentRepository.findById(id).orElseThrow(()->new StudentNotFoundException("student not found"));
-        studentRepository.deleteById(id);
+      student.setDeleted(true);
+        studentRepository.save(student);
     }
 
     @Override
@@ -245,7 +247,7 @@ public class StudentServiceImpl implements StudentService{
         dto.setFirstName(student.getFirstName());
         dto.setLastName(student.getLastName());
         dto.setEmail(student.getEmail());
-        //updated
+
         dto.setCreatedAt(student.getCreatedAt());
         dto.setUpdatedAt(student.getUpdatedAt());
         dto.setCreatedBy(student.getCreatedBy());
