@@ -45,7 +45,7 @@ SELECT new com.example.project.sms.dto.StudentProjectionDto
 """)
     List<StudentProjectionDto> getStudentProjection();
 
-    //updated
+
     @Query("""
 SELECT DISTINCT s
 FROM Student s
@@ -55,9 +55,9 @@ LEFT JOIN FETCH s.address
 """)
     List<Student> findALLWithDetails();
 
-    //or
+
     @EntityGraph(attributePaths = {"address","department","courses"})
-    @Query("SELECT s FROM Student")
+    @Query("SELECT s FROM Student s")
     List<Student> findALLWithDetails2();
 
 }

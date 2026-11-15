@@ -7,7 +7,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-//updated
+
 public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;

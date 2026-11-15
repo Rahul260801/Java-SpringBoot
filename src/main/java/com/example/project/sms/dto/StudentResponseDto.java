@@ -2,6 +2,7 @@ package com.example.project.sms.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -13,4 +14,9 @@ public class StudentResponseDto {
     private AddressResponseDto addressResponseDto;
     private String departmentName;
     private List<CourseResponseDto> courses;
+    //updated
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String createdBy;
+    private String  lastModifiedBy;
 }

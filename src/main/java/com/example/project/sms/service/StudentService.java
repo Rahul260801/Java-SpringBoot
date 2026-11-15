@@ -40,7 +40,7 @@ List<StudentProjectionDto> getProjectionDto();
 
 
   List<StudentResponseDto> searchStud(String firstName,String email,String courses);
-    //updated
+
     List<StudentResponseDto> getAllStudentCustom();
     List<StudentResponseDto> getStudentByDeptCustom(@RequestParam  String departmentName);
 }

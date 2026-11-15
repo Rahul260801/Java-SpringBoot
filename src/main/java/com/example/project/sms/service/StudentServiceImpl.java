@@ -245,6 +245,12 @@ public class StudentServiceImpl implements StudentService{
         dto.setFirstName(student.getFirstName());
         dto.setLastName(student.getLastName());
         dto.setEmail(student.getEmail());
+        //updated
+        dto.setCreatedAt(student.getCreatedAt());
+        dto.setUpdatedAt(student.getUpdatedAt());
+        dto.setCreatedBy(student.getCreatedBy());
+        dto.setLastModifiedBy(student.getLastModifiedBy());
+
         AddressResponseDto addressResponseDto = new AddressResponseDto();
         addressResponseDto.setCity(student.getAddress().getCity());
         addressResponseDto.setState(student.getAddress().getState());

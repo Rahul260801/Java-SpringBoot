@@ -66,7 +66,7 @@ public class StudentController {
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity <ApiResponse<StudentResponseDto>> updateStudent(@PathVariable Long id,@Valid @RequestBody StudentRequestDto dto){
         StudentResponseDto stu = studentService.updateStud(id,dto);
         ApiResponse<StudentResponseDto> res=new ApiResponse<>(
@@ -170,8 +170,7 @@ public class StudentController {
 
         return ResponseEntity.ok(response);
     }
-//upd
-    //http://localhost:8080/api/custom/dept?departmentName=CS
+
     @GetMapping("/custom")
     public List<StudentResponseDto> getAllCustom(){
         return studentService.getAllStudentCustom();
