@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,12 +42,13 @@ public class StudentServiceImpl implements StudentService{
         Student student = studentRepository.findById(id).orElseThrow(()-> new StudentNotFoundException("student not found by id"));
         return mapToResponse(student);
     }
-//updated
+
     @Override
     public List<StudentResponseDto> getAll() {
         return studentRepository.findALLWithDetails().stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public StudentResponseDto saveStud(StudentRequestDto dto) {
         if(studentRepository.existsByEmail(dto.getEmail())){
@@ -76,7 +78,16 @@ public class StudentServiceImpl implements StudentService{
 
         student.setCourses(courses);
         Student saveStu = studentRepository.save(student);
+        try {
+            sendConfirmationEmail();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
       return   mapToResponse(saveStu);
+    }
+
+    private void sendConfirmationEmail(){
+        throw new RuntimeException("somthing went wrong");
     }
 
     @Override
