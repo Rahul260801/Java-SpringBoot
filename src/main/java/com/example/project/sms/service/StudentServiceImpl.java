@@ -41,10 +41,10 @@ public class StudentServiceImpl implements StudentService{
         Student student = studentRepository.findById(id).orElseThrow(()-> new StudentNotFoundException("student not found by id"));
         return mapToResponse(student);
     }
-
+//updated
     @Override
     public List<StudentResponseDto> getAll() {
-        return studentRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+        return studentRepository.findALLWithDetails().stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -214,7 +214,7 @@ public class StudentServiceImpl implements StudentService{
         List<Student> students =studentRepository.findAll(spec);
         return students.stream().map(this::mapToResponse).toList();
     }
-//upda
+
     @Override
     public List<StudentResponseDto> getAllStudentCustom() {
         List<Student> students = studentRepository.findStudentCustom();

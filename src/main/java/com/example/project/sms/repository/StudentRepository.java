@@ -4,6 +4,7 @@ import com.example.project.sms.dto.StudentProjectionDto;
 import com.example.project.sms.entity.Student;
 import com.example.project.sms.projection.StudentProjection;
 import com.example.project.sms.repository.custom.StudentRepositoryCustom;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-//updated
+
 public interface StudentRepository extends JpaRepository<Student,Long>, JpaSpecificationExecutor<Student>, StudentRepositoryCustom {
     boolean existsByEmail(String email);
     Optional<Student> findByEmail(String email);
@@ -43,5 +44,20 @@ SELECT new com.example.project.sms.dto.StudentProjectionDto
 (s.firstName,s.lastName,s.email ) FROM Student s
 """)
     List<StudentProjectionDto> getStudentProjection();
+
+    //updated
+    @Query("""
+SELECT DISTINCT s
+FROM Student s
+LEFT JOIN FETCH s.courses
+LEFT JOIN FETCH s.department
+LEFT JOIN FETCH s.address
+""")
+    List<Student> findALLWithDetails();
+
+    //or
+    @EntityGraph(attributePaths = {"address","department","courses"})
+    @Query("SELECT s FROM Student")
+    List<Student> findALLWithDetails2();
 
 }
