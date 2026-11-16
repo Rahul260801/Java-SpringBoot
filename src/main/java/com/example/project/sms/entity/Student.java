@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-//updated
+
 @SQLDelete(sql = "UPDATE Student SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false ")
 public class Student {
@@ -55,8 +55,11 @@ public class Student {
             @JoinTable(name = "student_courses",joinColumns = @JoinColumn(name = "student_id"),inverseJoinColumns =
             @JoinColumn(name = "course_id"))
     List<Course> courses =new ArrayList<>();
-    //updated
+
     @Column(nullable = false)
     private boolean deleted = false;
+    //updated
+    @Version
+    private Long version;
 
 }

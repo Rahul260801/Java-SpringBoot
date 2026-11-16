@@ -13,6 +13,7 @@ import com.example.project.sms.repository.CourseRepository;
 import com.example.project.sms.repository.DepartmentRepository;
 import com.example.project.sms.repository.StudentRepository;
 import com.example.project.sms.specification.StudentSpecification;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,32 +90,43 @@ public class StudentServiceImpl implements StudentService{
     private void sendConfirmationEmail(){
         throw new RuntimeException("somthing went wrong");
     }
-
+    //updates
+@Transactional
     @Override
     public StudentResponseDto updateStud(Long id , StudentRequestDto dto) {
-        Student exsStu = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException("student not found"));
-
+        Student exsStu = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException("student not found"));
+        //update
+            if (!exsStu.getVersion().equals(dto.getVersion())){
+                throw new OptimisticLockException("student was already updated by another user");
+            }
             exsStu.setFirstName(dto.getFirstName());
             exsStu.setLastName(dto.getLastName());
             exsStu.setEmail(dto.getEmail());
             exsStu.setNumber(dto.getNumber());
-            Address address = exsStu.getAddress();
-            if (address == null){
-                address = new Address();
+            //update
+            if (dto.getAddressRequestDto() !=null) {
+                Address address = exsStu.getAddress();
+                if (address == null) {
+                    address = new Address();
+                }
+                address.setCity(dto.getAddressRequestDto().getCity());
+                address.setState(dto.getAddressRequestDto().getState());
+                address.setCountry(dto.getAddressRequestDto().getCountry());
+                exsStu.setAddress(address);
             }
-            address.setCity(dto.getAddressRequestDto().getCity());
-            address.setState(dto.getAddressRequestDto().getState());
-            address.setCountry(dto.getAddressRequestDto().getCountry());
-
             Department dept = departmentRepository.findById(dto.getDepartmentId()).orElseThrow(()-> new ResourceNotFoundException("id not found"));
             exsStu.setDepartment(dept);
-            exsStu.setAddress(address);
 
             Student updStudent = studentRepository.save(exsStu);
+            //update
+            List<Course> courses = courseRepository.findAllById(dto.getCourseId());
+            exsStu.setCourses(courses);
             return mapToResponse(updStudent);
     }
 
-    //updated
+
     @Override
     public void deleteById(Long id) {
         Student student = studentRepository.findById(id).orElseThrow(()->new StudentNotFoundException("student not found"));
@@ -267,7 +279,8 @@ public class StudentServiceImpl implements StudentService{
                 course.getInstructorName()
         )).toList()
         );
-
+        //update
+        dto.setVersion(student.getVersion());
         return dto;
     }
 }

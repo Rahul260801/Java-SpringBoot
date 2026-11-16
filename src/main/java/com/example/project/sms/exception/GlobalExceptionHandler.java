@@ -2,6 +2,7 @@ package com.example.project.sms.exception;
 
 import com.example.project.sms.payload.ApiResponse;
 import com.example.project.sms.payload.ErrorResponse;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -56,5 +57,17 @@ public class GlobalExceptionHandler {
                 errors
         );
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+    //update
+    @ExceptionHandler(OptimisticLockException.class)
+    public ResponseEntity<ApiResponse<Object>> handleOptimisticLockExcep(OptimisticLockException ex,HttpServletRequest req){
+        ApiResponse<Object> resp = new ApiResponse<>(
+                false,
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Student was already updated",
+                null
+        );
+        return new ResponseEntity<>(resp,HttpStatus.CONFLICT);
     }
 }

@@ -26,4 +26,6 @@ public class StudentRequestDto {
     private Long departmentId;
 
     private List<Long> courseId;
+    //update
+    private Long version;
 }
