@@ -5,6 +5,7 @@ import com.example.project.sms.payload.ErrorResponse;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -18,10 +19,13 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+//update
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(StudentNotFoundException.class)
     public ResponseEntity <ApiResponse<Object>> handleStudentNotFoundException(StudentNotFoundException ex, HttpServletRequest request) {
+        log.warn("Student not found {}",ex.getMessage());
         ApiResponse<Object> response = new  ApiResponse<>(
                 false,
                 LocalDateTime.now(),
@@ -58,7 +62,7 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
-    //update
+
     @ExceptionHandler(OptimisticLockException.class)
     public ResponseEntity<ApiResponse<Object>> handleOptimisticLockExcep(OptimisticLockException ex,HttpServletRequest req){
         ApiResponse<Object> resp = new ApiResponse<>(

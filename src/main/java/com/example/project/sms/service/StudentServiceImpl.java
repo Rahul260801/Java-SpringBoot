@@ -15,6 +15,7 @@ import com.example.project.sms.repository.StudentRepository;
 import com.example.project.sms.specification.StudentSpecification;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
+//update
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -37,16 +40,30 @@ public class StudentServiceImpl implements StudentService{
     private final DepartmentRepository departmentRepository;
     private final CourseRepository courseRepository;
 
-
+//update
     @Override
     public StudentResponseDto getId(Long id) {
-        Student student = studentRepository.findById(id).orElseThrow(()-> new StudentNotFoundException("student not found by id"));
+        log.debug("Fetching student with id {}", id);
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Student not found with id {}", id);
+                    return new StudentNotFoundException("Student not found by id: " + id);
+                });
+        log.info("Student fetch successfully with id {}",id);
         return mapToResponse(student);
     }
 
+    //update
     @Override
     public List<StudentResponseDto> getAll() {
-        return studentRepository.findALLWithDetails().stream().map(this::mapToResponse).collect(Collectors.toList());
+        log.info("Fetching all stud");
+        List<StudentResponseDto> students = studentRepository.findALLWithDetails()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        log.info("successfully fetched {} students",students);
+        return students;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -82,7 +99,9 @@ public class StudentServiceImpl implements StudentService{
         try {
             sendConfirmationEmail();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            //update
+          //  System.out.println(e.getMessage());
+            log.error("Failed to send",e);
         }
       return   mapToResponse(saveStu);
     }
@@ -90,14 +109,14 @@ public class StudentServiceImpl implements StudentService{
     private void sendConfirmationEmail(){
         throw new RuntimeException("somthing went wrong");
     }
-    //updates
+
 @Transactional
     @Override
     public StudentResponseDto updateStud(Long id , StudentRequestDto dto) {
         Student exsStu = studentRepository.findById(id)
                 .orElseThrow(() ->
                         new StudentNotFoundException("student not found"));
-        //update
+
             if (!exsStu.getVersion().equals(dto.getVersion())){
                 throw new OptimisticLockException("student was already updated by another user");
             }
@@ -105,7 +124,7 @@ public class StudentServiceImpl implements StudentService{
             exsStu.setLastName(dto.getLastName());
             exsStu.setEmail(dto.getEmail());
             exsStu.setNumber(dto.getNumber());
-            //update
+
             if (dto.getAddressRequestDto() !=null) {
                 Address address = exsStu.getAddress();
                 if (address == null) {
@@ -120,7 +139,7 @@ public class StudentServiceImpl implements StudentService{
             exsStu.setDepartment(dept);
 
             Student updStudent = studentRepository.save(exsStu);
-            //update
+
             List<Course> courses = courseRepository.findAllById(dto.getCourseId());
             exsStu.setCourses(courses);
             return mapToResponse(updStudent);
@@ -279,7 +298,7 @@ public class StudentServiceImpl implements StudentService{
                 course.getInstructorName()
         )).toList()
         );
-        //update
+
         dto.setVersion(student.getVersion());
         return dto;
     }
