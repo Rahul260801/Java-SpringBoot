@@ -58,7 +58,7 @@ public class Student {
 
     @Column(nullable = false)
     private boolean deleted = false;
-    //updated
+
     @Version
     private Long version;
 
