@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
-//update
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -40,7 +40,7 @@ public class StudentServiceImpl implements StudentService{
     private final DepartmentRepository departmentRepository;
     private final CourseRepository courseRepository;
 
-//update
+
     @Override
     public StudentResponseDto getId(Long id) {
         log.debug("Fetching student with id {}", id);
@@ -54,7 +54,7 @@ public class StudentServiceImpl implements StudentService{
         return mapToResponse(student);
     }
 
-    //update
+
     @Override
     public List<StudentResponseDto> getAll() {
         log.info("Fetching all stud");
@@ -99,7 +99,7 @@ public class StudentServiceImpl implements StudentService{
         try {
             sendConfirmationEmail();
         } catch (Exception e) {
-            //update
+
           //  System.out.println(e.getMessage());
             log.error("Failed to send",e);
         }
