@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class StudentServiceImpl implements StudentService{
     private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
     private final CourseRepository courseRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -83,13 +85,14 @@ public class StudentServiceImpl implements StudentService{
         );
         //Course entity
         List<Course> courses = courseRepository.findAllById(dto.getCourseId());
-
+//update-11
         //Student entity
         Student student = new Student();
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setNumber(dto.getNumber());
         student.setEmail(dto.getEmail());
+        student.setPassword(passwordEncoder.encode(dto.getPassword()));
         student.setAddress(address);
 
         student.setDepartment(dept);

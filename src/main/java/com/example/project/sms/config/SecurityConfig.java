@@ -1,10 +1,15 @@
 package com.example.project.sms.config;
 
+import com.example.project.sms.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,38 +17,62 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//update
+//update-7
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
-    //Bcrpt Password Encoder
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-    //security configuration
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf->csrf.disable()).
                 authorizeHttpRequests( auth->auth.
-                requestMatchers(HttpMethod.GET,"/api/students/**").hasAnyRole("USER","ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/api/students/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/api/students/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH,"/api/students/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/students/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-
-//                requestMatchers( "/api/students/**").permitAll()
-//                .anyRequest().authenticated()
-        ).httpBasic(Customizer.withDefaults());
+                requestMatchers("/auth/login")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+        ).sessionManagement(session->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )).authenticationProvider(
+                                authenticationProvider()
+                )
+                        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    // In memory users
+// below is previous version way
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(
+//                userDetailsService
+//        );
+//        provider.setPasswordEncoder(passwordEncoder);
+//        return provider;
+//    }
     @Bean
-    public UserDetailsService userDetailsService(){
-        UserDetails user = User.builder().username("user").password(passwordEncoder().encode("password")).roles("USER").build();
-        UserDetails admin = User.builder().username("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(user,admin);
+    public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+    provider.setPasswordEncoder(passwordEncoder);
+    return provider;
+}
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+        return config.getAuthenticationManager();
     }
+
+
+
+    // below one not needed now b/c of update 9
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        UserDetails user = User.builder().username("user").password(passwordEncoder.encode("password")).roles("USER").build();
+//        UserDetails admin = User.builder().username("admin").password(passwordEncoder.encode("admin")).roles("ADMIN").build();
+//        return new InMemoryUserDetailsManager(user,admin);
+//    }
 
 }
